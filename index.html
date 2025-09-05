@@ -58,11 +58,14 @@
     background-color: #4a90e2;
     color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
   }
 
-  button.option-btn:hover {
+  button.option-btn:hover,
+  button.option-btn:focus {
     background-color: #357ab8;
+    outline: none;
+    transform: scale(1.02);
   }
 
   /* Animações */
@@ -104,11 +107,14 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
   }
 
-  .final-btn:hover {
+  .final-btn:hover,
+  .final-btn:focus {
     background-color: #c2185b;
+    outline: none;
+    transform: scale(1.02);
   }
 
   /* Animar botão */
@@ -196,9 +202,13 @@
       const btn = document.createElement('button');
       btn.className = 'option-btn';
       btn.innerText = opt.text;
+      btn.setAttribute('aria-label', opt.text);
       btn.onclick = () => {
+        // Destacar opção selecionada
+        Array.from(optionsEl.children).forEach(child => child.disabled = true);
+        btn.style.backgroundColor = '#2c7be5';
         answers.push(opt.value);
-        nextQuestion();
+        setTimeout(nextQuestion, 300); // Pequena pausa para o usuário ver o clique
       };
       optionsEl.appendChild(btn);
     });
@@ -210,7 +220,7 @@
     optionsEl.classList.add('fade-out');
 
     setTimeout(() => {
-      // Remove current question
+      // Remover animações
       questionEl.classList.remove('fade-out');
       optionsEl.classList.remove('fade-out');
 
@@ -224,17 +234,16 @@
   }
 
   function showResult() {
-    // Hide options
+    // Esconder opções
     optionsEl.innerHTML = '';
 
-    // Determine result based on answers
-    // Simple logic: count answers
+    // Análise das respostas
     const counts = {};
     answers.forEach(a => {
       counts[a] = (counts[a] || 0) + 1;
     });
 
-    // For simplicity, pick the most frequent answer
+    // Encontrar resposta mais frequente
     let maxCount = 0;
     let selectedKey = '';
     for (const key in counts) {
@@ -247,8 +256,6 @@
     const message = results[selectedKey] || results['indeciso'];
 
     resultEl.innerHTML = `<p>${message}</p>`;
-
-    // Animate in result
     resultEl.style.opacity = 0;
     resultEl.style.display = 'block';
 
@@ -256,15 +263,15 @@
       resultEl.style.opacity = 1;
     }, 100);
 
-    // Show purchase button
+    // Mostrar botão de compra
     buyButton.style.display = 'inline-block';
     buyButton.classList.add('show');
   }
 
-  // Initialize first question
+  // Inicializa a primeira pergunta
   showQuestion(currentQuestion);
 
-  // Handle purchase button click
+  // Evento do botão de compra
  buyButton.onclick = () => {
     window.location.href = "https://pay.cakto.com.br/qvpast5_550213";
   };

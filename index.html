@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz - Faça seu bebê dormir em 2 minutos</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .question {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+  }
+
+  /* Opções */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  button.option-btn {
+    padding: 12px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 10px;
+    background-color: #4a90e2;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button.option-btn:hover {
+    background-color: #357ab8;
+  }
+
+  /* Animações */
+  .fade-in {
+    animation: fadeIn 1s forwards;
+  }
+
+  .fade-out {
+    animation: fadeOut 1s forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+
+  /* Resultado final */
+  .result {
+    text-align: center;
+    font-size: 1.2em;
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  /* Botão final */
+  .final-btn {
+    margin-top: 20px;
+    display: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background-color: #e91e63;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .final-btn:hover {
+    background-color: #c2185b;
+  }
+
+  /* Animar botão */
+  .show {
+    display: inline-block;
+    animation: bounceIn 1s;
+  }
+
+  @keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.05); opacity: 1; }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="quiz-container">
+  <h1>Descubra como ajudar seu bebê a dormir em 2 minutos</h1>
+  <div class="question" id="question">Vamos começar! Responda às perguntas para saber como podemos ajudar seu bebê.</div>
+  <div class="options" id="options"></div>
+  <div class="result" id="result"></div>
+  <button class="final-btn" id="buyButton">Clique aqui para ajudar seu bebê agora</button>
+</div>
+
+<script>
+  const questions = [
+    {
+      text: "Seu bebê tem dificuldades para dormir à noite?",
+      options: [
+        { text: "Sim, frequentemente", value: "dificuldade" },
+        { text: "Não, costuma dormir bem", value: "não_dificuldade" }
+      ]
+    },
+    {
+      text: "Seu bebê acorda muitas vezes durante a noite?",
+      options: [
+        { text: "Sim, muitas vezes", value: "acorda_muito" },
+        { text: "Não, dorme a noite toda", value: "dorme_bem" }
+      ]
+    },
+    {
+      text: "Você gostaria de melhorar a saúde do seu bebê?",
+      options: [
+        { text: "Sim, quero o melhor para ele", value: "saude_bebe" },
+        { text: "Não tenho certeza", value: "indeciso" }
+      ]
+    },
+    {
+      text: "Quer noites mais tranquilas para você também?",
+      options: [
+        { text: "Sim, preciso de descanso", value: "descanso" },
+        { text: "Não vejo problema", value: "sem_problema" }
+      ]
+    }
+  ];
+
+  const results = {
+    "dificuldade": "Seu bebê pode estar tendo dificuldades de sono que afetam toda a família. Nosso método ajuda a fazer seu bebê dormir em apenas 2 minutos, promovendo noites tranquilas e saúde melhor para ele.",
+    "acorda_muito": "Bebês que acordam muitas vezes podem se beneficiar de técnicas que regulam o sono. Nosso produto ajuda seu bebê a dormir profundamente e dormir a noite toda.",
+    "não_dificuldade": "Ótimo! Mas se quiser potencializar o sono do seu bebê, nosso método é uma excelente opção para noites ainda mais tranquilas.",
+    "dorme_bem": "Parabéns! Se desejar, nosso método pode ajudar seu bebê a dormir ainda melhor e melhorar a saúde dele.",
+    "saude_bebe": "Cuidar do sono do seu bebê é cuidar da saúde dele. Nosso método ajuda a regular o sono e melhorar a saúde do seu pequeno.",
+    "indeciso": "Entendemos. Nosso método é a solução rápida e eficaz para ajudar seu bebê a dormir em 2 minutos, promovendo noites tranquilas para toda a família.",
+    "descanso": "Noites tranquilas são essenciais para você também. Nosso método garante que seu bebê durma bem, e você possa descansar em paz.",
+    "sem_problema": "Que ótimo! Se desejar otimizar ainda mais o sono do seu bebê, conheça nossa solução que faz dormir em 2 minutos."
+  };
+
+  let currentQuestion = 0;
+  const answers = [];
+
+  const questionEl = document.getElementById('question');
+  const optionsEl = document.getElementById('options');
+  const resultEl = document.getElementById('result');
+  const buyButton = document.getElementById('buyButton');
+
+  function showQuestion(index) {
+    const q = questions[index];
+    questionEl.innerHTML = q.text;
+
+    optionsEl.innerHTML = '';
+
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerText = opt.text;
+      btn.onclick = () => {
+        answers.push(opt.value);
+        nextQuestion();
+      };
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function nextQuestion() {
+    // Animate out current question
+    questionEl.classList.add('fade-out');
+    optionsEl.classList.add('fade-out');
+
+    setTimeout(() => {
+      // Remove current question
+      questionEl.classList.remove('fade-out');
+      optionsEl.classList.remove('fade-out');
+
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion(currentQuestion);
+      } else {
+        showResult();
+      }
+    }, 500);
+  }
+
+  function showResult() {
+    // Hide options
+    optionsEl.innerHTML = '';
+
+    // Determine result based on answers
+    // Simple logic: count answers
+    const counts = {};
+    answers.forEach(a => {
+      counts[a] = (counts[a] || 0) + 1;
+    });
+
+    // For simplicity, pick the most frequent answer
+    let maxCount = 0;
+    let selectedKey = '';
+    for (const key in counts) {
+      if (counts[key] > maxCount) {
+        maxCount = counts[key];
+        selectedKey = key;
+      }
+    }
+
+    const message = results[selectedKey] || results['indeciso'];
+
+    resultEl.innerHTML = `<p>${message}</p>`;
+
+    // Animate in result
+    resultEl.style.opacity = 0;
+    resultEl.style.display = 'block';
+
+    setTimeout(() => {
+      resultEl.style.opacity = 1;
+    }, 100);
+
+    // Show purchase button
+    buyButton.style.display = 'inline-block';
+    buyButton.classList.add('show');
+  }
+
+  // Initialize first question
+  showQuestion(currentQuestion);
+
+  // Handle purchase button click
+ buyButton.onclick = () => {
+    window.location.href = "https://pay.cakto.com.br/qvpast5_550213";
+  };
+</script>
+
+</div>
+</body>
+</html>

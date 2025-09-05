@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Quiz - Faça seu bebê dormir em 2 minutos</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
   body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
     margin: 0;
     padding: 0;
@@ -14,13 +16,14 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   .container {
     background-color: #ffffff;
-    padding: 30px;
+    padding: 30px 40px 40px 40px;
     border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
     max-width: 600px;
     width: 90%;
     position: relative;
@@ -29,50 +32,60 @@
 
   h1 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     color: #333;
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
   }
 
   .question {
-    font-size: 1.2em;
-    margin-bottom: 15px;
-    min-height: 60px;
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    min-height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.5s ease;
+    color: #222;
+    font-weight: 600;
   }
 
   /* Opções */
   .options {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
   }
 
   button.option-btn {
-    padding: 12px 20px;
-    font-size: 1em;
+    padding: 14px 22px;
+    font-size: 1.1em;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     background-color: #4a90e2;
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 8px rgba(74,144,226,0.3);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
   }
 
   button.option-btn:hover,
   button.option-btn:focus {
     background-color: #357ab8;
     outline: none;
-    transform: scale(1.02);
-    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(53,122,184,0.8);
   }
 
   /* Feedback visual ao selecionar */
   button.option-btn.selected {
     background-color: #2c7be5;
-    box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    box-shadow: 0 0 18px rgba(44,123,229,0.9);
   }
 
   /* Animações */
@@ -97,32 +110,38 @@
   /* Resultado final */
   .result {
     text-align: center;
-    font-size: 1.2em;
-    margin-top: 20px;
+    font-size: 1.25em;
+    margin-top: 25px;
     opacity: 0;
     transition: opacity 1s ease;
+    color: #2c3e50;
+    font-weight: 600;
+    line-height: 1.5;
   }
 
   /* Botão final */
   .final-btn {
-    margin-top: 20px;
+    margin-top: 30px;
     display: none;
-    padding: 15px 30px;
-    font-size: 1.2em;
+    padding: 16px 36px;
+    font-size: 1.3em;
     background-color: #e91e63;
     color: #fff;
     border: none;
-    border-radius: 10px;
+    border-radius: 14px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    font-weight: 700;
+    box-shadow: 0 6px 15px rgba(233,30,99,0.6);
+    user-select: none;
   }
 
   .final-btn:hover,
   .final-btn:focus {
     background-color: #c2185b;
     outline: none;
-    transform: scale(1.02);
-    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    transform: scale(1.07);
+    box-shadow: 0 0 20px rgba(194,24,91,0.9);
   }
 
   /* Animar botão */
@@ -137,59 +156,111 @@
     70% { transform: scale(0.95); }
     100% { transform: scale(1); opacity: 1; }
   }
+
+  /* Barra de progresso */
+  .progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #d1d9e6;
+    border-radius: 10px;
+    margin: 25px 0 15px 0;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #e91e63, #f06292);
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out;
+  }
+
+  /* Emoji decorativo */
+  .emoji {
+    font-size: 1.6rem;
+    margin-right: 10px;
+    user-select: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .container {
+      padding: 25px 20px 30px 20px;
+    }
+    h1 {
+      font-size: 1.8rem;
+    }
+    button.option-btn {
+      font-size: 1em;
+      padding: 12px 18px;
+    }
+    .final-btn {
+      font-size: 1.1em;
+      padding: 14px 28px;
+    }
+  }
 </style>
 </head>
 <body>
 
-<div class="container" id="quiz-container">
-  <h1>Descubra como ajudar seu bebê a dormir em 2 minutos</h1>
-  <div class="question" id="question">Vamos começar! Responda às perguntas para saber como podemos ajudar seu bebê.</div>
-  <div class="options" id="options" role="list"></div>
-  <div class="result" id="result"></div>
+<div class="container" id="quiz-container" role="main" aria-live="polite" aria-atomic="true">
+  <h1>🌙 Descubra como ajudar seu bebê a dormir em 2 minutos</h1>
+
+  <div class="progress-bar" aria-label="Barra de progresso do quiz">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="question" id="question" aria-live="polite" aria-atomic="true">Vamos começar! Responda às perguntas para saber como podemos ajudar seu bebê.</div>
+
+  <div class="options" id="options" role="list" aria-label="Opções de resposta"></div>
+
+  <div class="result" id="result" aria-live="polite" aria-atomic="true"></div>
+
   <button class="final-btn" id="buyButton" aria-label="Clique aqui para ajudar seu bebê agora">Clique aqui para ajudar seu bebê agora</button>
 </div>
 
 <script>
   const questions = [
     {
-      text: "Seu bebê tem dificuldades para dormir à noite?",
+      text: "Seu bebê tem dificuldades para dormir à noite? 😴",
       options: [
-        { text: "Sim, frequentemente", value: "dificuldade" },
-        { text: "Não, costuma dormir bem", value: "não_dificuldade" }
+        { text: "Sim, frequentemente 😟", value: "dificuldade" },
+        { text: "Não, costuma dormir bem 😊", value: "nao_dificuldade" }
       ]
     },
     {
-      text: "Seu bebê acorda muitas vezes durante a noite?",
+      text: "Seu bebê acorda muitas vezes durante a noite? 🌙",
       options: [
-        { text: "Sim, muitas vezes", value: "acorda_muito" },
-        { text: "Não, dorme a noite toda", value: "dorme_bem" }
+        { text: "Sim, muitas vezes 😩", value: "acorda_muito" },
+        { text: "Não, dorme a noite toda 😴", value: "dorme_bem" }
       ]
     },
     {
-      text: "Você gostaria de melhorar a saúde do seu bebê?",
+      text: "Você gostaria de melhorar a saúde do seu bebê? ❤️",
       options: [
-        { text: "Sim, quero o melhor para ele", value: "saude_bebe" },
-        { text: "Não tenho certeza", value: "indeciso" }
+        { text: "Sim, quero o melhor para ele 💪", value: "saude_bebe" },
+        { text: "Não tenho certeza 🤔", value: "indeciso" }
       ]
     },
     {
-      text: "Quer noites mais tranquilas para você também?",
+      text: "Quer noites mais tranquilas para você também? 🌟",
       options: [
-        { text: "Sim, preciso de descanso", value: "descanso" },
-        { text: "Não vejo problema", value: "sem_problema" }
+        { text: "Sim, preciso de descanso 😌", value: "descanso" },
+        { text: "Não vejo problema 😅", value: "sem_problema" }
       ]
     }
   ];
 
   const results = {
-    "dificuldade": "Seu bebê pode estar tendo dificuldades de sono que afetam toda a família. Nosso método ajuda a fazer seu bebê dormir em apenas 2 minutos, promovendo noites tranquilas e saúde melhor para ele.",
-    "acorda_muito": "Bebês que acordam muitas vezes podem se beneficiar de técnicas que regulam o sono. Nosso produto ajuda seu bebê a dormir profundamente e dormir a noite toda.",
-    "não_dificuldade": "Ótimo! Mas se quiser potencializar o sono do seu bebê, nosso método é uma excelente opção para noites ainda mais tranquilas.",
-    "dorme_bem": "Parabéns! Se desejar, nosso método pode ajudar seu bebê a dormir ainda melhor e melhorar a saúde dele.",
-    "saude_bebe": "Cuidar do sono do seu bebê é cuidar da saúde dele. Nosso método ajuda a regular o sono e melhorar a saúde do seu pequeno.",
-    "indeciso": "Entendemos. Nosso método é a solução rápida e eficaz para ajudar seu bebê a dormir em 2 minutos, promovendo noites tranquilas para toda a família.",
-    "descanso": "Noites tranquilas são essenciais para você também. Nosso método garante que seu bebê durma bem, e você possa descansar em paz.",
-    "sem_problema": "Que ótimo! Se desejar otimizar ainda mais o sono do seu bebê, conheça nossa solução que faz dormir em 2 minutos."
+    "dificuldade": "Seu bebê pode estar tendo dificuldades de sono que afetam toda a família. Nosso método ajuda a fazer seu bebê dormir em apenas 2 minutos, promovendo noites tranquilas e saúde melhor para ele. 🌙✨",
+    "acorda_muito": "Bebês que acordam muitas vezes podem se beneficiar de técnicas que regulam o sono. Nosso produto ajuda seu bebê a dormir profundamente e dormir a noite toda. 💤🌟",
+    "nao_dificuldade": "Ótimo! Mas se quiser potencializar o sono do seu bebê, nosso método é uma excelente opção para noites ainda mais tranquilas. 😴💖",
+    "dorme_bem": "Parabéns! Se desejar, nosso método pode ajudar seu bebê a dormir ainda melhor e melhorar a saúde dele. 🌈🛌",
+    "saude_bebe": "Cuidar do sono do seu bebê é cuidar da saúde dele. Nosso método ajuda a regular o sono e melhorar a saúde do seu pequeno. ❤️👶",
+    "indeciso": "Entendemos. Nosso método é a solução rápida e eficaz para ajudar seu bebê a dormir em 2 minutos, promovendo noites tranquilas para toda a família. 🌟🕊️",
+    "descanso": "Noites tranquilas são essenciais para você também. Nosso método garante que seu bebê durma bem, e você possa descansar em paz. 😌🌙",
+    "sem_problema": "Que ótimo! Se desejar otimizar ainda mais o sono do seu bebê, conheça nossa solução que faz dormir em 2 minutos. 🌟💤"
   };
 
   let currentQuestion = 0;
@@ -199,10 +270,11 @@
   const optionsEl = document.getElementById('options');
   const resultEl = document.getElementById('result');
   const buyButton = document.getElementById('buyButton');
+  const progressBar = document.getElementById('progress');
 
   function showQuestion(index) {
     const q = questions[index];
-    questionEl.innerHTML = q.text;
+    questionEl.textContent = q.text;
 
     // Limpa opções anteriores
     optionsEl.innerHTML = '';
@@ -210,7 +282,7 @@
     q.options.forEach((opt, i) => {
       const btn = document.createElement('button');
       btn.className = 'option-btn';
-      btn.innerText = opt.text;
+      btn.innerHTML = `<span class="emoji">${opt.text.match(/[\u{1F300}-\u{1FAFF}]/gu) || ''}</span> ${opt.text.replace(/[\u{1F300}-\u{1FAFF}]/gu, '').trim()}`;
       btn.setAttribute('aria-label', opt.text);
       btn.setAttribute('role', 'listitem');
       btn.setAttribute('tabindex', '0');
@@ -226,7 +298,7 @@
         // Armazenar resposta
         answers[index] = opt.value;
         // Habilitar avanço
-        setTimeout(nextQuestion, 300);
+        setTimeout(nextQuestion, 350);
       };
 
       // Acessibilidade: navegação por teclado
@@ -239,10 +311,19 @@
 
       optionsEl.appendChild(btn);
     });
+
+    // Atualiza barra de progresso
+    const progressPercent = (index / questions.length) * 100;
+    progressBar.style.width = progressPercent + '%';
+
+    // Limpa resultado e botão
+    resultEl.style.opacity = 0;
+    buyButton.style.display = 'none';
+    buyButton.classList.remove('show');
   }
 
   function nextQuestion() {
-    // Animar saída
+    // Animação fade out
     questionEl.classList.add('fade-out');
     optionsEl.classList.add('fade-out');
 
@@ -266,22 +347,19 @@
     // Verifica se há respostas
     if(answers.some(a => a === undefined)){
       alert('Por favor, selecione uma resposta para cada pergunta!');
-      // Ainda podemos impedir de avançar
+      currentQuestion = 0;
+      showQuestion(currentQuestion);
       return;
     }
 
-    // Análise combinada
-    const counts = {};
-    answers.forEach(a => {
-      counts[a] = (counts[a] || 0) + 1;
-    });
+    // Atualiza barra para 100%
+    progressBar.style.width = '100%';
 
-    // Cria uma pontuação ponderada para cada resposta
-    // Você pode definir pesos diferentes para respostas
+    // Análise combinada
     const scores = {
       dificuldade: 0,
       nao_dificuldade: 0,
-      acorde_muito: 0,
+      acorda_muito: 0,
       dorme_bem: 0,
       saude_bebe: 0,
       indeciso: 0,
@@ -289,12 +367,11 @@
       sem_problema: 0
     };
 
-    // Mapear respostas aos scores
     answers.forEach(a => {
       switch(a){
         case 'dificuldade': scores.dificuldade += 2; break;
-        case 'acorda_muito': scores.acorde_muito += 2; break;
-        case 'não_dificuldade': scores.nao_dificuldade += 1; break;
+        case 'acorda_muito': scores.acorda_muito += 2; break;
+        case 'nao_dificuldade': scores.nao_dificuldade += 1; break;
         case 'dorme_bem': scores.dorme_bem += 1; break;
         case 'saude_bebe': scores.saude_bebe += 2; break;
         case 'indeciso': scores.indeciso += 1; break;
@@ -316,9 +393,8 @@
     const message = results[selectedKey] || results['indeciso'];
 
     // Mostrar resultado com animação
-    resultEl.innerHTML = `<p>${message}</p>`;
+    resultEl.innerHTML = `<p>✨ ${message}</p>`;
     resultEl.style.display = 'block';
-    resultEl.style.opacity = 0;
     setTimeout(() => {
       resultEl.style.opacity = 1;
     }, 100);
@@ -332,9 +408,9 @@
   showQuestion(currentQuestion);
 
   buyButton.onclick = () => {
-    window.location.href = "https://pay.cakto.com.br/qvpast5_550213";
+    window.open("https://pay.cakto.com.br/qvpast5_550213", "_blank");
   };
 </script>
-</div>
+
 </body>
 </html>

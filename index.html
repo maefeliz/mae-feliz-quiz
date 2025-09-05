@@ -58,7 +58,7 @@
     background-color: #4a90e2;
     color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
   }
 
   button.option-btn:hover,
@@ -66,6 +66,13 @@
     background-color: #357ab8;
     outline: none;
     transform: scale(1.02);
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  }
+
+  /* Feedback visual ao selecionar */
+  button.option-btn.selected {
+    background-color: #2c7be5;
+    box-shadow: 0 0 12px rgba(0,0,0,0.3);
   }
 
   /* Animações */
@@ -74,7 +81,7 @@
   }
 
   .fade-out {
-    animation: fadeOut 1s forwards;
+    animation: fadeOut 0.5s forwards;
   }
 
   @keyframes fadeIn {
@@ -107,7 +114,7 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
   }
 
   .final-btn:hover,
@@ -115,6 +122,7 @@
     background-color: #c2185b;
     outline: none;
     transform: scale(1.02);
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
   }
 
   /* Animar botão */
@@ -136,9 +144,9 @@
 <div class="container" id="quiz-container">
   <h1>Descubra como ajudar seu bebê a dormir em 2 minutos</h1>
   <div class="question" id="question">Vamos começar! Responda às perguntas para saber como podemos ajudar seu bebê.</div>
-  <div class="options" id="options"></div>
+  <div class="options" id="options" role="list"></div>
   <div class="result" id="result"></div>
-  <button class="final-btn" id="buyButton">Clique aqui para ajudar seu bebê agora</button>
+  <button class="final-btn" id="buyButton" aria-label="Clique aqui para ajudar seu bebê agora">Clique aqui para ajudar seu bebê agora</button>
 </div>
 
 <script>
@@ -196,31 +204,49 @@
     const q = questions[index];
     questionEl.innerHTML = q.text;
 
+    // Limpa opções anteriores
     optionsEl.innerHTML = '';
 
-    q.options.forEach(opt => {
+    q.options.forEach((opt, i) => {
       const btn = document.createElement('button');
       btn.className = 'option-btn';
       btn.innerText = opt.text;
       btn.setAttribute('aria-label', opt.text);
+      btn.setAttribute('role', 'listitem');
+      btn.setAttribute('tabindex', '0');
+      btn.setAttribute('data-index', i);
+      
+      // Gerenciar o clique
       btn.onclick = () => {
-        // Destacar opção selecionada
-        Array.from(optionsEl.children).forEach(child => child.disabled = true);
-        btn.style.backgroundColor = '#2c7be5';
-        answers.push(opt.value);
-        setTimeout(nextQuestion, 300); // Pequena pausa para o usuário ver o clique
+        // Validar se já há uma resposta selecionada
+        const selectedBtns = optionsEl.querySelectorAll('.option-btn');
+        selectedBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+
+        // Armazenar resposta
+        answers[index] = opt.value;
+        // Habilitar avanço
+        setTimeout(nextQuestion, 300);
       };
+
+      // Acessibilidade: navegação por teclado
+      btn.onkeyup = (e) => {
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          btn.onclick();
+        }
+      };
+
       optionsEl.appendChild(btn);
     });
   }
 
   function nextQuestion() {
-    // Animate out current question
+    // Animar saída
     questionEl.classList.add('fade-out');
     optionsEl.classList.add('fade-out');
 
     setTimeout(() => {
-      // Remover animações
       questionEl.classList.remove('fade-out');
       optionsEl.classList.remove('fade-out');
 
@@ -234,31 +260,65 @@
   }
 
   function showResult() {
-    // Esconder opções
+    // Limpa opções
     optionsEl.innerHTML = '';
 
-    // Análise das respostas
+    // Verifica se há respostas
+    if(answers.some(a => a === undefined)){
+      alert('Por favor, selecione uma resposta para cada pergunta!');
+      // Ainda podemos impedir de avançar
+      return;
+    }
+
+    // Análise combinada
     const counts = {};
     answers.forEach(a => {
       counts[a] = (counts[a] || 0) + 1;
     });
 
-    // Encontrar resposta mais frequente
-    let maxCount = 0;
+    // Cria uma pontuação ponderada para cada resposta
+    // Você pode definir pesos diferentes para respostas
+    const scores = {
+      dificuldade: 0,
+      nao_dificuldade: 0,
+      acorde_muito: 0,
+      dorme_bem: 0,
+      saude_bebe: 0,
+      indeciso: 0,
+      descanso: 0,
+      sem_problema: 0
+    };
+
+    // Mapear respostas aos scores
+    answers.forEach(a => {
+      switch(a){
+        case 'dificuldade': scores.dificuldade += 2; break;
+        case 'acorda_muito': scores.acorde_muito += 2; break;
+        case 'não_dificuldade': scores.nao_dificuldade += 1; break;
+        case 'dorme_bem': scores.dorme_bem += 1; break;
+        case 'saude_bebe': scores.saude_bebe += 2; break;
+        case 'indeciso': scores.indeciso += 1; break;
+        case 'descanso': scores.descanso += 2; break;
+        case 'sem_problema': scores.sem_problema += 1; break;
+      }
+    });
+
+    // Encontrar a resposta com maior pontuação
+    let maxScore = -Infinity;
     let selectedKey = '';
-    for (const key in counts) {
-      if (counts[key] > maxCount) {
-        maxCount = counts[key];
+    for(const key in scores){
+      if(scores[key] > maxScore){
+        maxScore = scores[key];
         selectedKey = key;
       }
     }
 
     const message = results[selectedKey] || results['indeciso'];
 
+    // Mostrar resultado com animação
     resultEl.innerHTML = `<p>${message}</p>`;
-    resultEl.style.opacity = 0;
     resultEl.style.display = 'block';
-
+    resultEl.style.opacity = 0;
     setTimeout(() => {
       resultEl.style.opacity = 1;
     }, 100);
@@ -271,12 +331,10 @@
   // Inicializa a primeira pergunta
   showQuestion(currentQuestion);
 
-  // Evento do botão de compra
- buyButton.onclick = () => {
+  buyButton.onclick = () => {
     window.location.href = "https://pay.cakto.com.br/qvpast5_550213";
   };
 </script>
-
 </div>
 </body>
 </html>
